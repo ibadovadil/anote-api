@@ -6,6 +6,8 @@ import com.adil.anoteapi.dto.user.UserCreateDto;
 import com.adil.anoteapi.dto.user.UserDetailDto;
 import com.adil.anoteapi.dto.user.UserUpdateDto;
 import com.adil.anoteapi.entity.User;
+import com.adil.anoteapi.exception.ResourceAlreadyExistsException;
+import com.adil.anoteapi.exception.ResourceNotFoundException;
 import com.adil.anoteapi.mapper.UserMapper;
 import com.adil.anoteapi.repository.UserRepository;
 import com.adil.anoteapi.service.interf.IUserService;
@@ -34,7 +36,7 @@ public class UserService implements IUserService {
     @Override
     public UserDetailDto getUserDetails() {
         String username = retrieveCurrentUsername();
-        User user = userRepository.findByUsernameOrEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByUsernameOrEmail(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return userMapper.toDetailDto(user);
     }
 
@@ -42,18 +44,18 @@ public class UserService implements IUserService {
     @Override
     public UserDetailDto updateUser(UserUpdateDto dto) {
         User user = userRepository.findByUsernameOrEmail(retrieveCurrentUsername())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         if (dto.getUsername() != null && !dto.getUsername().equals(user.getUsername())) {
             if (userRepository.existsByUsername(dto.getUsername())) {
-                throw new IllegalArgumentException("Username is already taken");
+                throw new ResourceAlreadyExistsException("Username is already taken");
             }
             user.setUsername(dto.getUsername());
         }
 
         if (dto.getEmail() != null && !dto.getEmail().equals(user.getEmail())) {
             if (userRepository.existsByEmail(dto.getEmail())) {
-                throw new IllegalArgumentException("Email is already in use");
+                throw new ResourceAlreadyExistsException("Email is already taken");
             }
             user.setEmail(dto.getEmail());
         }
@@ -68,7 +70,7 @@ public class UserService implements IUserService {
     @Override
     public void changePassword(UserChangePasswordDto dto) {
         User user = userRepository.findByUsernameOrEmail(retrieveCurrentUsername())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
             throw new IllegalArgumentException("Old password is not correct");
         }
@@ -89,7 +91,7 @@ public class UserService implements IUserService {
     @Override
     public void deleteUser() {
         User user = userRepository.findByUsernameOrEmail(retrieveCurrentUsername())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         userRepository.delete(user);
     }
 

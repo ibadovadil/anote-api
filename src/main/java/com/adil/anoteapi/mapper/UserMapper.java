@@ -1,5 +1,6 @@
 package com.adil.anoteapi.mapper;
 
+import com.adil.anoteapi.dto.admin.UserListDto;
 import com.adil.anoteapi.dto.user.UserCreateDto;
 import com.adil.anoteapi.dto.user.UserDetailDto;
 import com.adil.anoteapi.dto.user.UserUpdateDto;
@@ -15,4 +16,6 @@ public interface UserMapper {
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUserFromDto(UserUpdateDto dto, @MappingTarget User user);
+
+    UserListDto toListDto(User user);
 }
