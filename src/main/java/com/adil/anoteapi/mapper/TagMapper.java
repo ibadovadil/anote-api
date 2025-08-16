@@ -5,6 +5,7 @@ import com.adil.anoteapi.entity.Tag;
 import org.mapstruct.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper(componentModel = "spring")
 public interface TagMapper {
@@ -18,6 +19,7 @@ public interface TagMapper {
     TagListDto toListDto(Tag tag);
 
     List<TagListDto> toListDtoList(List<Tag> tags);
+    List<TagDetailDto> toListDtoListDetailed(List<Tag> tags);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateTagFromDto(TagUpdateDto dto, @MappingTarget Tag tag);
