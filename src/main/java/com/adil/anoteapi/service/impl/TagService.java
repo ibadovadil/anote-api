@@ -5,16 +5,18 @@ import com.adil.anoteapi.dto.tag.TagDetailDto;
 import com.adil.anoteapi.dto.tag.TagUpdateDto;
 import com.adil.anoteapi.entity.Tag;
 import com.adil.anoteapi.entity.User;
+import com.adil.anoteapi.exception.ResourceAlreadyExistsException;
+import com.adil.anoteapi.exception.ResourceNotFoundException;
 import com.adil.anoteapi.mapper.TagMapper;
 import com.adil.anoteapi.repository.TagRepository;
 import com.adil.anoteapi.repository.UserRepository;
 import com.adil.anoteapi.service.interf.ITagService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +26,22 @@ public class TagService implements ITagService {
     private final TagMapper mapper;
     private final UserRepository userRepository;
 
+
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByUsernameOrEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    }
+
     @Override
     public TagDetailDto createTag(TagCreateDto dto) {
+        User currentUser = getCurrentUser();
+        if (repo.existsByNameAndUserId(dto.getName(),currentUser.getId())){
+            throw new ResourceAlreadyExistsException("Tag already exists");
+        }
         Tag tag = mapper.toEntity(dto);
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        tag.setUser(user);
+        tag.setUser(currentUser);
+
         Tag savedTag = repo.save(tag);
         return mapper.toDetailDto(savedTag);
     }

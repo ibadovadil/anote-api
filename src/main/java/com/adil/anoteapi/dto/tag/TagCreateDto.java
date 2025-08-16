@@ -10,6 +10,5 @@ public class TagCreateDto {
     @NotBlank
     @Size(max = 50)
     private String name;
-    private Long userId;
 }
 
