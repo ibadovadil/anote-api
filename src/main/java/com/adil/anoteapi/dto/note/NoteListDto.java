@@ -10,5 +10,5 @@ public class NoteListDto {
     private Long id;
     private String title;
     private String content;
-    private TagListDto tag; // list-də də göstərmək
+    private String tagName;
 }

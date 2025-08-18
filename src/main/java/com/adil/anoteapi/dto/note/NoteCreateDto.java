@@ -14,5 +14,5 @@ public class NoteCreateDto {
     @NotBlank
     private String content;
 
-    private Long tagId; // nullable, çünki tagsiz ola bilər
+    private Long tagId;
 }

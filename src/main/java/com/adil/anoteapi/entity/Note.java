@@ -29,8 +29,7 @@ public class Note {
     private String title;
 
     @NotBlank
-    @Lob
-    @Column(nullable = false,columnDefinition = "TEXT")
+    @Column(nullable = false, columnDefinition = "text")
     private String content;
 
     @CreatedDate

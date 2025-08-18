@@ -5,14 +5,17 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor @Builder
+@AllArgsConstructor
+@Builder
 public class NoteDetailDto {
     private Long id;
     private String title;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private TagListDto tag; // tag haqqında sadə info
+    private Long tagId;
+    private String tagName;
 }
